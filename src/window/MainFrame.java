@@ -4,18 +4,18 @@ import java.awt.Graphics;
 
 import javax.swing.JFrame;
 
-import window.panels.FieldPanel;
+import window.panels.MainPanel;
 import main.Const;
 
 public class MainFrame extends JFrame {
-	private FieldPanel field;
+	private MainPanel field;
 	
 	public MainFrame() {
-		field = new FieldPanel();
+		field = new MainPanel();
 		setContentPane(field);
 		
 		setLocation(100, 100);
-		setSize(Const.MainFrameWidth, Const.MainFrameHeight);
+		setSize(field.getSize());
 		setResizable(false);
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -24,6 +24,7 @@ public class MainFrame extends JFrame {
 	
 	@Override
 	public void paint(Graphics g) {
+		super.paint(g);
 		
 	}
 
