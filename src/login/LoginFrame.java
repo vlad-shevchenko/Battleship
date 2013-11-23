@@ -120,14 +120,14 @@ public class LoginFrame extends JFrame {
 				StringTokenizer tokenizer = new StringTokenizer(fldIp.getText(), ".");
 				for (int i = 0; i < 4; i++) {
 					int b = 0;
-					
-					if(tokenizer.hasMoreTokens())
+					if(tokenizer.hasMoreTokens()) {
 						try {
 							b = Integer.parseInt(tokenizer.nextToken());
 						} catch (Exception ex) {
 							btnConnect.setEnabled(false);
 							return;
 						}
+					}
 					
 					if (b < 0 || b >= 256) { 
 						btnConnect.setEnabled(false);
