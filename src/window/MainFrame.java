@@ -18,14 +18,8 @@ public class MainFrame extends JFrame {
 		setSize(field.getSize());
 		setResizable(false);
 		
+		setTitle("Battleship");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 	}
-	
-	@Override
-	public void paint(Graphics g) {
-		super.paint(g);
-		
-	}
-
 }
