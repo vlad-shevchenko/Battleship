@@ -25,8 +25,8 @@ public class Const {
 	public static final int LoginFrameHeight = 150;
 	
 // Place for 2 fields and some additional for borders, status and message bars
-	public static final int MainFrameWidth = (CellSize + 1) * FieldWidth * 2 + 14;
-	public static final int MainFrameHeight = (CellSize + 1) * FieldHeight + 45;
+	public static final int MainFrameWidth = (CellSize + 1) * FieldWidth * 2 + 50;
+	public static final int MainFrameHeight = (CellSize + 1) * FieldHeight + 65;
 	
 // Fonts and colors
 	public static final Color ButtonBackground = new Color(0, 250, 154);
@@ -50,10 +50,10 @@ public class Const {
 	 * Yeah, I'm crazy code monkey :-(
 	 */
 	public static final Point[] ShipInitialCoords = {
-		new Point(357, 129),  
-		new Point(237, 129),
-		new Point(337, 50),
-		new Point(219, 50) 
+		new Point(387, 129),  
+		new Point(262, 129),
+		new Point(372, 50),
+		new Point(239, 50) 
 		};
 		
 }
