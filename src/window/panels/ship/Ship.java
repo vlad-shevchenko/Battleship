@@ -28,21 +28,17 @@ public class Ship {
 			Rectangle2D rect = null;
 			if(orientation) {
 				rect = new Rectangle2D.Double(
-						location.x + i * Const.CellSize + 1, location.y, 
+						location.x + 1 + i * (Const.CellSize + 1), location.y + 1, 
 						Const.CellSize, Const.CellSize);
 			} else {
 				rect = new Rectangle2D.Double(
-						location.x + i * Const.CellSize + 1, location.y, 
+						location.x + 1, location.y + 1 + i * (Const.CellSize + 1), 
 						Const.CellSize, Const.CellSize);
 			}
 			rects.add(rect);
 		}
 
-		int x = (int) rects.get(0).getX();
-		int y = (int) rects.get(0).getY();
-		int width = size * (Const.CellSize + 1);
-		int height = size * (Const.CellSize + 1);
-		fullRect = new Rectangle2D.Double(x, y, width, height);
+		recalculateFullRect();
 	}
 	
 	/**
@@ -61,13 +57,25 @@ public class Ship {
 	 */
 	public Point getCenter() {
 		if(size % 2 == 1) {
-			int x = (int) rects.get(size / 2).getCenterX();
-			int y = (int) rects.get(size / 2).getCenterY();
-			return new Point(x, y);
+			if(orientation) {
+				int x = (int) rects.get(size / 2).getCenterX();
+				int y = (int) rects.get(size / 2).getCenterY();
+				return new Point(x, y);
+			} else {
+				int x = (int) rects.get(size / 2).getCenterX();
+				int y = (int) rects.get(size / 2).getCenterY();
+				return new Point(x, y);
+			}
 		} else {
-			int x = (int) rects.get(size / 2 - 1).getMaxX() + 1;
-			int y = (int) rects.get(size / 2 - 1).getCenterY();
-			return new Point(x, y);
+			if(orientation) {
+				int x = (int) rects.get(size / 2 - 1).getMaxX();
+				int y = (int) rects.get(size / 2 - 1).getCenterY();
+				return new Point(x, y);
+			} else {
+				int x = (int) rects.get(size / 2 - 1).getCenterX();
+				int y = (int) rects.get(size / 2 - 1).getMaxY();
+				return new Point(x, y);
+			}
 		}
 	}
 	
@@ -81,9 +89,31 @@ public class Ship {
 		Point diff = new Point(newLoc.x - curLoc.x, newLoc.y - curLoc.y);
 		
 		for(Rectangle2D rect : rects) {
-			rect.setFrame(rect.getX() + diff.x, rect.getY() + diff.y, 
-					Const.CellSize, Const.CellSize);
+			if(orientation) {
+				rect.setFrame(rect.getX() + diff.x + 1, rect.getY() + diff.y, 
+						Const.CellSize, Const.CellSize);
+			} else {
+				rect.setFrame(rect.getX() + diff.x, rect.getY() + diff.y + 1, 
+						Const.CellSize, Const.CellSize);
+			}
 		}
+
+		recalculateFullRect();
+	}
+
+	private void recalculateFullRect() {
+		int x = (int) rects.get(0).getX();
+		int y = (int) rects.get(0).getY();
+		int width;
+		int height;
+		if(orientation) {
+			width = size * (Const.CellSize + 1) + 1;
+			height = Const.CellSize + 2;
+		} else {
+			height = size * (Const.CellSize + 1) + 1;
+			width = Const.CellSize + 2;
+		}
+		fullRect = new Rectangle2D.Double(x - 1, y - 1, width, height);
 	}
 	
 	/**
@@ -98,7 +128,7 @@ public class Ship {
 		
 		Point diff = new Point(curLoc.x - curCenter.x, curLoc.y - curCenter.y);
 		
-		Point newLoc = new Point(newCenter.x - diff.x, newCenter.y - diff.y);
+		Point newLoc = new Point(newCenter.x + diff.x, newCenter.y + diff.y);
 		
 		moveLocation(newLoc);
 	}
@@ -106,10 +136,12 @@ public class Ship {
 	public void draw(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
 		
+		g2.setColor(new Color(90, 100, 100));
+		g2.fill(fullRect);
+		
 		g2.setColor(new Color(30, 100, 255));
-		g2.setBackground(new Color(30, 100, 255));
 		for(Rectangle2D rect : rects) {
-			g2.draw(rect);
+			g2.fill(rect);
 		}
 	}
 	
@@ -117,15 +149,18 @@ public class Ship {
 		return fullRect.contains(p);
 	}
 	
-	public void changeOrientation() {
+	public boolean getOrientation() {
+		return this.orientation;
 		
 	}
 
 	/**
-	 * @return the orientation
+	 * @return new Ship object with another orientation
 	 */
-	public boolean getOrientation() {
-		return this.orientation;
+	public Ship oppositeOrientation() {
+		Ship newShip = new Ship(size, new Point(0, 0), !orientation);
+		newShip.moveCenter(getCenter());
+		return newShip;
 	}
 
 	/**
