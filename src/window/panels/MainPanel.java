@@ -1,11 +1,13 @@
 package window.panels;
 
+import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.Robot;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
@@ -26,8 +28,6 @@ import main.Const;
 import window.panels.ship.Ship;
 
 public class MainPanel extends JPanel {
-
-	private ArrayList<Point> points;
 
 	private MouseHandler handler;
 	
@@ -134,7 +134,7 @@ public class MainPanel extends JPanel {
 		lbl4Count = new JLabel("0");
 		lbl4Count.setFocusable(false);
 		lbl4Count.setBorder(new MatteBorder(0, 0, 1, 1, (Color) new Color(0, 0, 255)));
-		lbl4Count.setForeground(new Color(220, 20, 60));
+		lbl4Count.setForeground(Const.FrameBackgroudColor);
 		lbl4Count.setFont(Const.LabelFont);
 		lbl4Count.setHorizontalAlignment(SwingConstants.CENTER);
 		pnl4decker.add(lbl4Count, BorderLayout.CENTER);
@@ -147,7 +147,7 @@ public class MainPanel extends JPanel {
 		lbl3Count = new JLabel("0");
 		lbl3Count.setFocusable(false);
 		lbl3Count.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 255)));
-		lbl3Count.setForeground(new Color(220, 20, 60));
+		lbl3Count.setForeground(Const.FrameBackgroudColor);
 		lbl3Count.setFont(Const.LabelFont);
 		lbl3Count.setHorizontalAlignment(SwingConstants.CENTER);
 		pnl3decker.add(lbl3Count, BorderLayout.CENTER);
@@ -160,7 +160,7 @@ public class MainPanel extends JPanel {
 		lbl2Count = new JLabel("0");
 		lbl2Count.setFocusable(false);
 		lbl2Count.setBorder(new MatteBorder(0, 0, 1, 1, (Color) new Color(0, 0, 255)));
-		lbl2Count.setForeground(new Color(220, 20, 60));
+		lbl2Count.setForeground(Const.FrameBackgroudColor);
 		lbl2Count.setFont(Const.LabelFont);
 		lbl2Count.setHorizontalAlignment(SwingConstants.CENTER);
 		pnl2decker.add(lbl2Count, BorderLayout.CENTER);
@@ -173,7 +173,7 @@ public class MainPanel extends JPanel {
 		lbl1Count = new JLabel("0");
 		lbl1Count.setFocusable(false);
 		lbl1Count.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 255)));
-		lbl1Count.setForeground(new Color(220, 20, 60));
+		lbl1Count.setForeground(Const.FrameBackgroudColor);
 		lbl1Count.setFont(Const.LabelFont);
 		lbl1Count.setHorizontalAlignment(SwingConstants.CENTER);
 		pnl1decker.add(lbl1Count, BorderLayout.CENTER);
@@ -203,7 +203,8 @@ public class MainPanel extends JPanel {
 		
 		ships = new ArrayList<Ship>(Const.ShipCount);
 		for(int i = 0; i < Const.ShipCount; ++i) {
-			Ship ship = new Ship(Const.ShipSizes[i], Const.ShipInitialCoords[Const.ShipSizes[i] - 1], true);
+			Ship ship = new Ship(Const.ShipSizes[i], new Point(0, 0), true);
+			ship.moveCenter(Const.ShipInitialCoords[Const.ShipSizes[i] - 1]);
 			ships.add(i, ship);
 			
 			JLabel counter = null;
@@ -227,8 +228,6 @@ public class MainPanel extends JPanel {
 			}
 			counter.setText(String.valueOf((Integer.parseInt(counter.getText()) + 1)));
 		}
-
-		points = new ArrayList<Point>();
 		
 		handler = new MouseHandler();
 		this.addMouseListener(handler);
@@ -237,15 +236,16 @@ public class MainPanel extends JPanel {
 		
 		field = new Field();
 		field.setOpaque(false);
-		field.addMouseMotionListener(new MouseMotionAdapter() {
-			
-			public void mouseMoved(MouseEvent e) {
-				handler.fieldXOnScreen = e.getXOnScreen() - e.getX();
-				handler.fieldYOnScreen = e.getYOnScreen() - e.getY();
-				System.out.println(handler.fieldXOnScreen + " " + handler.fieldYOnScreen);
-			}
-		});
+		FieldMouseHandler fieldHandler = new FieldMouseHandler();
+		field.addMouseMotionListener(fieldHandler);
 		pnlLeftField.add(field);
+		
+		try {
+			Robot robot = new Robot();
+			robot.mouseMove(200, 200);
+		} catch (AWTException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -254,14 +254,17 @@ public class MainPanel extends JPanel {
 		
 		for(Ship ship : ships) {
 			ship.draw(g);
-		}		
-		
-		g.setColor(new Color(255, 255, 255));
-		for(Point p : points) {
-			g.drawRect(p.x, p.y, 2, 2);
 		}
 	}
 	
+	private final class FieldMouseHandler extends MouseMotionAdapter {
+		public void mouseMoved(MouseEvent e) {
+			handler.fieldXOnScreen = e.getXOnScreen() - e.getX();
+			handler.fieldYOnScreen = e.getYOnScreen() - e.getY();
+			System.out.println(handler.fieldXOnScreen + " " + handler.fieldYOnScreen);
+		}
+	}
+
 	private class MouseHandler implements MouseListener, MouseMotionListener {
 		
 		private Ship curShip;
@@ -271,24 +274,23 @@ public class MainPanel extends JPanel {
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			Ship newShip = find(e.getPoint());
-			if(newShip != null) {
-				ships.set(ships.indexOf(newShip), newShip.oppositeOrientation());
+			if((e.getModifiers() & MouseEvent.BUTTON3_MASK) != 0) {
+				ArrayList<Ship> shipArr = findAll(e.getPoint());
+				for(Ship s : shipArr) {
+					ships.set(ships.indexOf(s), s.oppositeOrientation());
+				}
+				repaint();
 			}
-			repaint();
-			System.out.println("mouseClicked");
 		}
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
 			if(curShip != null) {
-				// TODO move ship only if left mouse button is down
-				if(true) {
+				if((e.getModifiers() & MouseEvent.BUTTON1_MASK) != 0) {
 					curShip.moveLocation(e.getPoint());
 					repaint();
 				}
 			}
-//			System.out.println("mouseDragged");
 		}
 
 		@Override
@@ -305,12 +307,13 @@ public class MainPanel extends JPanel {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			Ship ship = find(e.getPoint());
-			if(ship != null) {
-				curShip = ship;
-				decLabel(ship.getSize());
+			if((e.getModifiers() & MouseEvent.BUTTON1_MASK) != 0) {
+				Ship ship = find(e.getPoint());
+				if(ship != null) {
+					curShip = ship;
+					decLabel(ship.getSize());
+				}
 			}
-			System.out.println("mousePressed");
 		}
 
 		@Override
@@ -323,19 +326,18 @@ public class MainPanel extends JPanel {
 					ships.remove(curShip);
 				} else if(returnCode == 1) {
 					// Error: ship is not fit to the field
-					curShip.moveLocation(Const.ShipInitialCoords[curShip.getSize() - 1]);
+					curShip.moveCenter(Const.ShipInitialCoords[curShip.getSize() - 1]);
 					incLabel(curShip.getSize());
 					System.err.println("Error: ship is not fit to the field");
 				} else if(returnCode == 2) {
 					// Error: ship is contacting other ships
 					System.err.println("Error: ship is contacting other ships");
-					curShip.moveLocation(Const.ShipInitialCoords[curShip.getSize() - 1]);
+					curShip.moveCenter(Const.ShipInitialCoords[curShip.getSize() - 1]);
 					incLabel(curShip.getSize());
 				}
 				curShip = null;
 				repaint();
 			}
-			System.out.println("mouseReleased");
 		}
 		
 		private void incLabel(int size) {
@@ -398,6 +400,17 @@ public class MainPanel extends JPanel {
 			}
 			
 			return null;
-		}		
+		}
+		
+		private ArrayList<Ship> findAll(Point p) {
+			ArrayList<Ship> result = new ArrayList<Ship>(0);
+			for(Ship s : ships) {
+				if(s.contains(p)) {
+					result.add(s);
+				}
+			}
+			
+			return result;
+		}
 	}
 }

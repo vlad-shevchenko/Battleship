@@ -90,10 +90,10 @@ public class Ship {
 		
 		for(Rectangle2D rect : rects) {
 			if(orientation) {
-				rect.setFrame(rect.getX() + diff.x + 1, rect.getY() + diff.y, 
+				rect.setFrame(rect.getX() + diff.x, rect.getY() + diff.y, 
 						Const.CellSize, Const.CellSize);
 			} else {
-				rect.setFrame(rect.getX() + diff.x, rect.getY() + diff.y + 1, 
+				rect.setFrame(rect.getX() + diff.x, rect.getY() + diff.y, 
 						Const.CellSize, Const.CellSize);
 			}
 		}
