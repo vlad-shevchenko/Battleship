@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import javax.swing.Box;
@@ -25,6 +26,8 @@ import main.Const;
 import window.panels.ship.Ship;
 
 public class MainPanel extends JPanel {
+
+	private ArrayList<Point> points;
 
 	private MouseHandler handler;
 	
@@ -224,6 +227,8 @@ public class MainPanel extends JPanel {
 			}
 			counter.setText(String.valueOf((Integer.parseInt(counter.getText()) + 1)));
 		}
+
+		points = new ArrayList<Point>();
 		
 		handler = new MouseHandler();
 		this.addMouseListener(handler);
@@ -250,6 +255,11 @@ public class MainPanel extends JPanel {
 		for(Ship ship : ships) {
 			ship.draw(g);
 		}		
+		
+		g.setColor(new Color(255, 255, 255));
+		for(Point p : points) {
+			g.drawRect(p.x, p.y, 2, 2);
+		}
 	}
 	
 	private class MouseHandler implements MouseListener, MouseMotionListener {
@@ -278,7 +288,7 @@ public class MainPanel extends JPanel {
 					repaint();
 				}
 			}
-			System.out.println("mouseDragged");
+//			System.out.println("mouseDragged");
 		}
 
 		@Override

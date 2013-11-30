@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
@@ -12,6 +14,8 @@ import main.Const;
 
 public class Field extends JPanel {
 
+	private ArrayList<Point> points;
+	
 	private CellState[][] cells;
 	
 	private int width;
@@ -35,18 +39,22 @@ public class Field extends JPanel {
 		setSize(width * (cellSize + 1), height * (cellSize + 1));
 		setMinimumSize(getSize());
 		setMaximumSize(getSize());
+
+		points = new ArrayList<Point>();
 	}
 	
 	public int addShip(Ship ship, int x, int y) {
-		Point newCoords = getGridCoords(ship, x, y);
+		points.add(new Point(x, y));
+		
+		Point newCords = getGridCoords(ship, x, y);
 		
 		Point[] shipCells = new Point[ship.getSize()];
 		for(int i = 0; i < shipCells.length; ++i) {
 			Point newCell;
 			if(ship.getOrientation()) {
-				newCell = new Point(newCoords.x + i, newCoords.y);
+				newCell = new Point(newCords.x + i, newCords.y);
 			} else {
-				newCell = new Point(newCoords.y, newCoords.y + i);
+				newCell = new Point(newCords.x, newCords.y + i);
 			}
 			shipCells[i] = newCell;
 		}
@@ -151,6 +159,11 @@ public class Field extends JPanel {
 				}
 				}
 			}
+		}
+		
+		g2.setColor(new Color(0, 0, 0));
+		for(Point p : points) {
+			g2.drawRect(p.x, p.y, 3, 3);
 		}
 	}
 }
