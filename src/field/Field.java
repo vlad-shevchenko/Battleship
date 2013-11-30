@@ -13,8 +13,6 @@ import window.panels.ship.Ship;
 import main.Const;
 
 public class Field extends JPanel {
-
-	private ArrayList<Point> points;
 	
 	private CellState[][] cells;
 	
@@ -39,13 +37,9 @@ public class Field extends JPanel {
 		setSize(width * (cellSize + 1), height * (cellSize + 1));
 		setMinimumSize(getSize());
 		setMaximumSize(getSize());
-
-		points = new ArrayList<Point>();
 	}
 	
-	public int addShip(Ship ship, int x, int y) {
-		points.add(new Point(x, y));
-		
+	public int addShip(Ship ship, int x, int y) {		
 		Point newCords = getGridCoords(ship, x, y);
 		
 		Point[] shipCells = new Point[ship.getSize()];
@@ -93,11 +87,16 @@ public class Field extends JPanel {
 			int x = shipCells[i].x;
 			int y = shipCells[i].y;
 			
+			// return false if current cell or any neighbor already is not empty 
 			if(cells[x][y] != CellState.Empty) return false;
 			if(x + 1 < width && cells[x + 1][y] != CellState.Empty) return false; 
 			if(x - 1 > 0 && cells[x - 1][y] != CellState.Empty) return false; 
 			if(y + 1 < height && cells[x][y + 1] != CellState.Empty) return false; 
-			if(y - 1 > 0 && cells[x][y - 1] != CellState.Empty) return false; 
+			if(y - 1 > 0 && cells[x][y - 1] != CellState.Empty) return false;
+			if(y - 1 > 0 && x - 1 > 0 && cells[x - 1][y - 1] != CellState.Empty) return false;
+			if(y - 1 > 0 && x + 1 < width && cells[x + 1][y - 1] != CellState.Empty) return false;
+			if(y + 1 < height && x - 1 > 0 && cells[x - 1][y + 1] != CellState.Empty) return false;
+			if(y + 1 < height && x + 1 < width && cells[x + 1][y + 1] != CellState.Empty) return false;
 		}
 		
 		return true;
@@ -159,11 +158,6 @@ public class Field extends JPanel {
 				}
 				}
 			}
-		}
-		
-		g2.setColor(new Color(0, 0, 0));
-		for(Point p : points) {
-			g2.drawRect(p.x, p.y, 3, 3);
 		}
 	}
 }
