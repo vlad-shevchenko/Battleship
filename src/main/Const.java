@@ -50,10 +50,10 @@ public class Const {
 	 * Yeah, I'm crazy code monkey :-(
 	 */
 	public static final Point[] ShipInitialCoords = {
-		new Point(387, 129),  
-		new Point(262, 129),
-		new Point(372, 50),
-		new Point(239, 50) 
+		new Point(398, 153),  
+		new Point(279, 153),
+		new Point(398, 65),
+		new Point(279, 65) 
 		};
 		
 }
