@@ -79,5 +79,6 @@ public class Const {
 		new Point(378, 65),
 		new Point(273, 65) 
 		};
+	public static final Color FilledCellColor = new Color(195, 150, 150);
 		
 }

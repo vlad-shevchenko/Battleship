@@ -1,42 +1,32 @@
 package window.panels.field;
 
-import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
-
-import javax.swing.JPanel;
 
 import window.panels.ship.Ship;
 import main.Const;
 
-public class Field extends JPanel {
+public class PlayerField extends AbstractField {
+
+	private ArrayList<Point> filledCells;
 	
-	private CellState[][] cells;
-	
-	private int width;
-	private int height;
-	private int cellSize;
-	
-	public Field() {
-		width = Const.FieldWidth;
-		height= Const.FieldHeight;
-		cellSize = Const.CellSize;
+	public PlayerField() {
+		super();
 		
-		cells = new CellState[width][height];
+		filledCells = new ArrayList<Point>(0);
+	}
+	
+	@Override
+	public void paint(Graphics g) {
+		super.paint(g);
 		
-		for(int i = 0; i < width; ++i) {
-			for(int j = 0; j < height; ++j) {
-				cells[i][j] = CellState.Empty;
-			}
+		for(Point p : filledCells) {
+			int x = p.x * (Const.CellSize + 1);
+			int y = p.y * (Const.CellSize + 1);
+			g.setColor(Const.FilledCellColor);
+			g.fillRect(x, y, Const.CellSize, Const.CellSize);
 		}
-		
-		setBackground(new Color(0, 0, 255));
-		setSize(width * (cellSize + 1), height * (cellSize + 1));
-		setMinimumSize(getSize());
-		setMaximumSize(getSize());
 	}
 	
 	public int addShip(Ship ship, int x, int y) {		
@@ -63,6 +53,7 @@ public class Field extends JPanel {
 		
 		for(int i = 0; i < shipCells.length; ++i) {
 			cells[shipCells[i].x][shipCells[i].y] = CellState.Filled;
+			filledCells.add(new Point(shipCells[i].x, shipCells[i].y));
 		}
 		return 0;		
 	}
@@ -124,45 +115,5 @@ public class Field extends JPanel {
 		}
 		
 		return new Point(newX, newY);
-	}
-	
-	@Override
-	public void paint(Graphics g) {
-		super.paint(g);
-		
-		Graphics2D g2 = (Graphics2D) g;
-		
-		for(int i = 0; i < Const.FieldWidth; ++i) {
-			for(int j = 0; j < Const.FieldHeight; ++j) {
-				int x = i * (Const.CellSize + 1);
-				int y = j * (Const.CellSize + 1);
-				
-				switch (cells[i][j]) {
-				case Empty: {
-					g2.setColor(new Color(95, 150, 150));
-					g2.fillRect(x, y, Const.CellSize, Const.CellSize);
-					break;
-				}
-				case Filled: {
-					g2.setColor(new Color(195, 150, 150));
-					g2.fillRect(x, y, Const.CellSize, Const.CellSize);
-					break;
-				}
-				case Sinked: {
-					g2.setColor(new Color(195, 150, 150));
-					g2.fillRect(x, y, Const.CellSize, Const.CellSize);
-					g2.setColor(new Color(200, 30, 80));
-					g2.drawLine(x, y, x + cellSize, y + cellSize);
-					g2.drawLine(x + cellSize, y, x, y + cellSize);
-					break;
-				}
-				case Checked: {
-					g2.setColor(new Color(0, 0, 0));
-					g2.fillOval(x, y, cellSize, cellSize);
-					break;
-				}
-				}
-			}
-		}
 	}
 }

@@ -14,7 +14,6 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -22,17 +21,18 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.MatteBorder;
-
 import main.Const;
-import window.panels.field.Field;
+import window.MainFrame.Connection;
+import window.panels.field.PlayerField;
 import window.panels.ship.Ship;
 
 public class MainPanel extends JPanel {
 
 	private MouseHandler handler;
+	private Connection connect;
 	
 	private ArrayList<Ship> ships;
-	private Field field;
+	private PlayerField playerField;
 	
 	private JLabel lblRightPlayer;
 	private JLabel lblRightStatus;
@@ -235,15 +235,15 @@ public class MainPanel extends JPanel {
 		this.addMouseMotionListener(handler);
 		pnlLeftField.setLayout(new BorderLayout(0, 0));
 		
-		field = new Field();
-		field.setOpaque(false);
-		field.addMouseMotionListener(new MouseMotionAdapter() {
+		playerField = new PlayerField();
+		playerField.setOpaque(false);
+		playerField.addMouseMotionListener(new MouseMotionAdapter() {
 			public void mouseMoved(MouseEvent e) {
 				handler.fieldXOnScreen = e.getXOnScreen() - e.getX();
 				handler.fieldYOnScreen = e.getYOnScreen() - e.getY();
 			}
 		});
-		pnlLeftField.add(field);
+		pnlLeftField.add(playerField);
 		
 		try {
 			Robot robot = new Robot();
@@ -327,6 +327,8 @@ public class MainPanel extends JPanel {
 		}
 	}
 	
+	
+	
 	public String getLeftName() {
 		return lblLeftPlayer.getText();
 	}
@@ -399,7 +401,7 @@ public class MainPanel extends JPanel {
 			if(curShip != null) {
 				int xPos = e.getXOnScreen() - fieldXOnScreen;
 				int yPos = e.getYOnScreen() - fieldYOnScreen;
-				int returnCode = field.addShip(curShip, xPos, yPos);
+				int returnCode = playerField.addShip(curShip, xPos, yPos);
 				if(returnCode == 0) {
 					ships.remove(curShip);
 					if(ships.size() == 0) {
