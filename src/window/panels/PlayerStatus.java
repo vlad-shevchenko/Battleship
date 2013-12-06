@@ -1,9 +1,12 @@
-package window;
+package window.panels;
 
 public enum PlayerStatus {
 
 	Connecting,
 	Places_ships,
 	Leave,
-	Ready;
+	Ready,
+	
+	Shot,
+	Miss;
 }

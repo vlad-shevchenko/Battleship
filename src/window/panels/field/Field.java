@@ -1,4 +1,4 @@
-package field;
+package window.panels.field;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -149,11 +149,16 @@ public class Field extends JPanel {
 					break;
 				}
 				case Sinked: {
-					// TODO: Draw cross as a symbol that ship is sinked
+					g2.setColor(new Color(195, 150, 150));
+					g2.fillRect(x, y, Const.CellSize, Const.CellSize);
+					g2.setColor(new Color(200, 30, 80));
+					g2.drawLine(x, y, x + cellSize, y + cellSize);
+					g2.drawLine(x + cellSize, y, x, y + cellSize);
 					break;
 				}
 				case Checked: {
-					// TODO: Draw dot in the center of cell
+					g2.setColor(new Color(0, 0, 0));
+					g2.fillOval(x, y, cellSize, cellSize);
 					break;
 				}
 				}

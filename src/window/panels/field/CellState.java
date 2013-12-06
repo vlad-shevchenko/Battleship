@@ -1,4 +1,4 @@
-package field;
+package window.panels.field;
 
 public enum CellState {
 	Empty,
