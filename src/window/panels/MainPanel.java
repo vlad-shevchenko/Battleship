@@ -23,8 +23,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.MatteBorder;
 
-import field.Field;
 import main.Const;
+import window.panels.field.Field;
 import window.panels.ship.Ship;
 
 public class MainPanel extends JPanel {
@@ -48,8 +48,10 @@ public class MainPanel extends JPanel {
 	private JLabel lbl3Count;
 	private JLabel lbl2Count;
 	private JLabel lbl1Count;
+	
+	private JButton btnReady;
 
-	public MainPanel() {
+	public MainPanel(String userName) {
 		setSize(Const.MainFrameWidth, Const.MainFrameHeight);
 		setMinimumSize(getSize());
 		setMaximumSize(getSize());
@@ -74,16 +76,15 @@ public class MainPanel extends JPanel {
 		pnlLeft.add(pnlLeftStatus, BorderLayout.NORTH);
 		pnlLeftStatus.setLayout(new BoxLayout(pnlLeftStatus, BoxLayout.X_AXIS));
 		
-		lblLeftPlayer = new JLabel("Player1");
+		lblLeftPlayer = new JLabel(userName);
 		lblLeftPlayer.setForeground(Const.LabelColor);
 		lblLeftPlayer.setFont(Const.LabelFont);
 		pnlLeftStatus.add(lblLeftPlayer);
 		
-		Component horizontalGlue = Box.createHorizontalGlue();
-		pnlLeftStatus.add(horizontalGlue);
+		Component horizontalGlue_1 = Box.createHorizontalGlue();
+		pnlLeftStatus.add(horizontalGlue_1);
 		
 		lblLeftStatus = new JLabel("");
-		lblLeftStatus.setForeground(Const.LabelColor);
 		lblLeftStatus.setFont(Const.LabelFont);
 		pnlLeftStatus.add(lblLeftStatus);
 		
@@ -104,12 +105,11 @@ public class MainPanel extends JPanel {
 		pnlRightStatus.setLayout(new BoxLayout(pnlRightStatus, BoxLayout.X_AXIS));
 		
 		lblRightStatus = new JLabel("");
-		lblRightStatus.setForeground(Const.LabelColor);
 		lblRightStatus.setFont(Const.LabelFont);
 		pnlRightStatus.add(lblRightStatus);
 		
-		Component horizontalGlue_1 = Box.createHorizontalGlue();
-		pnlRightStatus.add(horizontalGlue_1);
+		Component horizontalGlue = Box.createHorizontalGlue();
+		pnlRightStatus.add(horizontalGlue);
 		
 		lblRightPlayer = new JLabel("Player2");
 		lblRightPlayer.setForeground(Const.LabelColor);
@@ -183,8 +183,9 @@ public class MainPanel extends JPanel {
 		pnlShips.add(pnlButtons);
 		pnlButtons.setLayout(new BoxLayout(pnlButtons, BoxLayout.X_AXIS));
 		
-		JButton btnReady = new JButton("Ready!");
+		btnReady = new JButton("Ready!");
 		btnReady.setFocusable(false);
+		btnReady.setEnabled(false);
 		btnReady.setBackground(Const.ButtonBackground);
 		btnReady.setFont(Const.LabelFont);
 		btnReady.setForeground(Const.LabelColor);
@@ -236,8 +237,12 @@ public class MainPanel extends JPanel {
 		
 		field = new Field();
 		field.setOpaque(false);
-		FieldMouseHandler fieldHandler = new FieldMouseHandler();
-		field.addMouseMotionListener(fieldHandler);
+		field.addMouseMotionListener(new MouseMotionAdapter() {
+			public void mouseMoved(MouseEvent e) {
+				handler.fieldXOnScreen = e.getXOnScreen() - e.getX();
+				handler.fieldYOnScreen = e.getYOnScreen() - e.getY();
+			}
+		});
 		pnlLeftField.add(field);
 		
 		try {
@@ -246,6 +251,9 @@ public class MainPanel extends JPanel {
 		} catch (AWTException e1) {
 			e1.printStackTrace();
 		}
+		
+		updateLeftStatus(PlayerStatus.Places_ships);
+		updateRightStatus(PlayerStatus.Connecting);
 	}
 	
 	@Override
@@ -257,12 +265,82 @@ public class MainPanel extends JPanel {
 		}
 	}
 	
-	private final class FieldMouseHandler extends MouseMotionAdapter {
-		public void mouseMoved(MouseEvent e) {
-			handler.fieldXOnScreen = e.getXOnScreen() - e.getX();
-			handler.fieldYOnScreen = e.getYOnScreen() - e.getY();
-			System.out.println(handler.fieldXOnScreen + " " + handler.fieldYOnScreen);
+	public void updateName(String name) {
+		lblRightPlayer.setText(name);
+	}
+	
+	public void updateRightStatus(PlayerStatus status) {
+		switch (status) {
+		case Connecting:
+			lblLeftStatus.setForeground(Const.ConnectingStatusColor);
+			lblLeftStatus.setText("Connecting...");
+			break;
+		case Places_ships:
+			lblLeftStatus.setForeground(Const.PlacesShipsStatusColor);
+			lblLeftStatus.setText("Places ships");
+			break;
+		case Leave:
+			lblLeftStatus.setForeground(Const.LeaveStatusColor);
+			lblLeftStatus.setText("Leave :(");
+			break;
+		case Ready:
+			lblLeftStatus.setForeground(Const.ReadyStatusColor);
+			lblLeftStatus.setText("Ready!");
+			break;
+		case Shot:
+			lblLeftStatus.setForeground(Const.ShotStatusColor);
+			lblLeftStatus.setText("Shot");
+			break;
+		case Miss:
+			lblLeftStatus.setForeground(Const.MissStatusColor);
+			lblLeftStatus.setText("Miss");
+			break;
 		}
+	}
+	
+	public void updateLeftStatus(PlayerStatus status) {
+		switch (status) {
+		case Connecting:
+			lblRightStatus.setForeground(Const.ConnectingStatusColor);
+			lblRightStatus.setText("Connecting...");
+			break;
+		case Places_ships:
+			lblRightStatus.setForeground(Const.PlacesShipsStatusColor);
+			lblRightStatus.setText("Places ships");
+			break;
+		case Leave:
+			lblRightStatus.setForeground(Const.LeaveStatusColor);
+			lblRightStatus.setText("Leave :(");
+			break;
+		case Ready:
+			lblRightStatus.setForeground(Const.ReadyStatusColor);
+			lblRightStatus.setText("Ready!");
+			break;
+		case Shot:
+			lblRightStatus.setForeground(Const.ShotStatusColor);
+			lblRightStatus.setText("Shot");
+			break;
+		case Miss:
+			lblRightStatus.setForeground(Const.MissStatusColor);
+			lblRightStatus.setText("Miss");
+			break;
+		}
+	}
+	
+	public String getLeftName() {
+		return lblLeftPlayer.getText();
+	}
+	
+	public String getRightName() {
+		return lblRightPlayer.getText();
+	}
+	
+	public void setLeftName(String name) {
+		lblLeftPlayer.setText(name);
+	}
+	
+	public void setRightName(String name) {
+		lblRightPlayer.setText(name);
 	}
 
 	private class MouseHandler implements MouseListener, MouseMotionListener {
@@ -324,6 +402,9 @@ public class MainPanel extends JPanel {
 				int returnCode = field.addShip(curShip, xPos, yPos);
 				if(returnCode == 0) {
 					ships.remove(curShip);
+					if(ships.size() == 0) {
+						btnReady.setEnabled(true);
+					}
 				} else if(returnCode == 1) {
 					// Error: ship is not fit to the field
 					curShip.moveCenter(Const.ShipInitialCoords[curShip.getSize() - 1]);
