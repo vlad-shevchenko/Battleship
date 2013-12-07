@@ -61,14 +61,14 @@ public class Const {
 	public static final String ConnectButtonCommand = "LoginFrame -> btnConnect";
 	
 //	Game properties
-	public static final int ShipCount = 10;
+	public static final int ShipCount = 3;
 	
 	/**
 	 * Size of the array must be equal to ShipCount.
 	 * Change array is not recommended, because UI was 
 	 * designed specially for such ship-set. 
 	 */
-	public static final int[] ShipSizes = {4, 3, 3, 2, 2, 2, 1, 1, 1, 1};
+	public static final int[] ShipSizes = {4, 3, 2, 1};
 	
 	/**
 	 * Yeah, I'm crazy code monkey :-(

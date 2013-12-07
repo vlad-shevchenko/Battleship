@@ -2,10 +2,17 @@ package window;
 
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -14,6 +21,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import window.panels.MainPanel;
 import window.panels.PlayerStatus;
@@ -28,6 +36,14 @@ public class MainFrame extends JFrame {
 		connect = new Connection(socket);
 		
 		panel = new MainPanel(userName);
+		panel.setConnection(connect);
+		panel.setReadyActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				connect.setReady();
+				panel.addEnemyField();
+				panel.setEnemyFieldMouseListener(new MouseHandler());
+			}
+		});
 		setContentPane(panel);
 		
 		setLocation(100, 100);
@@ -40,59 +56,138 @@ public class MainFrame extends JFrame {
 
 		connect.start();
 	}
-
-	public void updateStatus(PlayerStatus status) {
-		
-	}
 	
-	/**
-	 * Set name of second player. <br>
-	 * Such method for first user is not necessary, cause it's known before
-	 * creating panel and can be transmitted to the constructor.
-	 * 
-	 * @param name
-	 *            - name of second player
-	 */
-	public void setSecondUserName(String name) {
-		
-	}
-
-	public boolean fire(Point p) {
-		return false;
-			
-	}
-
-	public boolean isFinish() {
-		return false;
-			
-	}
-	
-	private class Connection extends Thread {
+	public class Connection extends Thread {
 		
 		private Socket socket;
-		private BufferedReader in;
-		private PrintWriter out;
+		private DataInputStream in;
+		private DataOutputStream out;
 		
-		public Connection(Socket socket) throws UnknownHostException, IOException {
+		private Point target;
+		
+		private boolean playerIsReady = false;
+		private boolean enemyIsReady = false;
+		private boolean firstFire = false;
+		private boolean win = false;
+		
+		Connection(Socket socket) throws UnknownHostException, IOException {
 			this.socket = socket;
-			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			out = new PrintWriter(socket.getOutputStream(), true);
+			in = new DataInputStream(socket.getInputStream());
+			out = new DataOutputStream(socket.getOutputStream());
 		}
 		
 		@Override
 		public void run() {
 			try {
 				panel.updateRightStatus(PlayerStatus.Places_ships);
-				out.write(panel.getLeftName());
-				String rightName = in.readLine();
+				out.writeUTF(panel.getLeftName());
+				String rightName = in.readUTF();
 				panel.setRightName(rightName);
+				
+				enemyIsReady = in.readBoolean();
+				panel.updateRightStatus(PlayerStatus.Ready);
+				
+				try {
+					while(!(playerIsReady && enemyIsReady)) {
+						sleep(100);
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				
+				// if currentTurn == true, is player's turn now, else enemy's one
+				boolean currentTurn = firstFire;
+				
+				if(currentTurn) {
+					panel.updateLeftStatus(PlayerStatus.Turn);
+					panel.updateRightStatus(PlayerStatus.Wait);
+				} else {
+					panel.updateLeftStatus(PlayerStatus.Wait);
+					panel.updateRightStatus(PlayerStatus.Turn);
+				}
+				
+				while(true) {
+					if(currentTurn) {
+						try {
+							while(target == null) {
+								sleep(100);
+							}
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						
+						byte[] targetBytes = {(byte) target.x, (byte) target.y};
+						out.write(targetBytes);
+						
+						if(targetBytes[0] < 0 && targetBytes[1] < 0) {
+							panel.updateLeftStatus(PlayerStatus.Lose);
+							panel.updateRightStatus(PlayerStatus.Win);
+							win = false;
+							break;
+						}
+						boolean shot = in.readBoolean();
+						panel.enemyCheck(target, shot);
+						if (shot) {
+							panel.updateLeftStatus(PlayerStatus.Shot);
+						} else {
+							panel.updateLeftStatus(PlayerStatus.Miss);
+						}
+						
+						currentTurn = shot;
+						target = null;
+					} else {
+						byte[] targetBytes = new byte[2];
+						in.read(targetBytes);
+						
+						if(targetBytes[0] < 0 && targetBytes[1] < 0) {
+							panel.updateLeftStatus(PlayerStatus.Win);
+							panel.updateRightStatus(PlayerStatus.Lose);
+							win = true;
+							break;
+						}
+						
+						boolean shot = panel.fire(new Point((int) targetBytes[0], (int) targetBytes[1]));
+						out.writeBoolean(shot);
+						if(shot) {
+							panel.updateRightStatus(PlayerStatus.Shot);
+						} else {
+							panel.updateRightStatus(PlayerStatus.Miss);
+						}
+						
+						currentTurn = !shot;
+						
+						if(panel.getShipsCount() == 0) {
+							target = new Point(-1, -1);
+						}
+					}
+				}
+				
+				JOptionPane.showMessageDialog(MainFrame.this,
+						win ? "Game over. You've won!"
+								: "Game over. You'he lose!", "End",
+						JOptionPane.INFORMATION_MESSAGE);
 			} catch (IOException e) {
+				System.err.println("Connection has been lost.");
+				panel.updateRightStatus(PlayerStatus.Leave);
 				e.printStackTrace();
 			}			
 		}
 		
-		void setReady() {
-			out.print(true);
+		public void setReady() {
+			playerIsReady = true;
+			try {
+				out.writeBoolean(true);
+			} catch (IOException e) {
+				// Ready-signal has not been send
+				e.printStackTrace();
+			}
+			panel.updateLeftStatus(PlayerStatus.Ready);
+			if(!enemyIsReady) firstFire = true;
+		}
+		
+		public void setTarget(Point p) {
+			target = p;
+			System.out.println("Target: " + p);
 		}
 		
 		@Override
@@ -103,5 +198,16 @@ public class MainFrame extends JFrame {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private class MouseHandler extends MouseAdapter {
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			int x = e.getX() / (Const.CellSize + 1);
+			int y = e.getY() / (Const.CellSize + 1);
+			
+			connect.setTarget(new Point(x, y));
+		}		
 	}
 }

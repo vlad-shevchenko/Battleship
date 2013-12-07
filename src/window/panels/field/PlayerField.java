@@ -29,6 +29,23 @@ public class PlayerField extends AbstractField {
 		}
 	}
 	
+	public boolean fire(int x, int y) {
+		if(cells[x][y] == CellState.Filled) {
+			filledCells.remove(new Point(x, y));
+			cells[x][y] = CellState.Sinked;
+
+			repaint();
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public int getShipsCount() {
+		System.out.println(filledCells.size());
+		return filledCells.size();
+	}
+	
 	public int addShip(Ship ship, int x, int y) {		
 		Point newCords = getGridCoords(ship, x, y);
 		
@@ -54,6 +71,7 @@ public class PlayerField extends AbstractField {
 		for(int i = 0; i < shipCells.length; ++i) {
 			cells[shipCells[i].x][shipCells[i].y] = CellState.Filled;
 			filledCells.add(new Point(shipCells[i].x, shipCells[i].y));
+			System.out.println(filledCells.size());
 		}
 		return 0;		
 	}

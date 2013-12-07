@@ -8,5 +8,11 @@ public enum PlayerStatus {
 	Ready,
 	
 	Shot,
-	Miss;
+	Miss,
+	
+	Turn,
+	Wait,
+	
+	Win,
+	Lose;
 }

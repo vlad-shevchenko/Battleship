@@ -8,12 +8,15 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Robot;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -21,8 +24,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.MatteBorder;
+
 import main.Const;
 import window.MainFrame.Connection;
+import window.panels.field.EnemyField;
 import window.panels.field.PlayerField;
 import window.panels.ship.Ship;
 
@@ -33,11 +38,16 @@ public class MainPanel extends JPanel {
 	
 	private ArrayList<Ship> ships;
 	private PlayerField playerField;
+	private EnemyField enemyField;
 	
 	private JLabel lblRightPlayer;
 	private JLabel lblRightStatus;
 	private JLabel lblLeftStatus;
 	private JLabel lblLeftPlayer;
+
+	private JPanel pnlShips;
+	private JPanel pnlShipsList;
+	private JPanel pnlButtons;
 	
 	private JPanel pnl4decker;
 	private JPanel pnl3decker;
@@ -116,12 +126,12 @@ public class MainPanel extends JPanel {
 		lblRightPlayer.setFont(Const.LabelFont);
 		pnlRightStatus.add(lblRightPlayer);
 		
-		JPanel pnlShips = new JPanel();
+		pnlShips = new JPanel();
 		pnlShips.setOpaque(false);
 		pnlRight.add(pnlShips, BorderLayout.CENTER);
 		pnlShips.setLayout(new BoxLayout(pnlShips, BoxLayout.Y_AXIS));
 		
-		JPanel pnlShipsList = new JPanel();
+		pnlShipsList = new JPanel();
 		pnlShipsList.setOpaque(false);
 		pnlShips.add(pnlShipsList);
 		pnlShipsList.setLayout(new GridLayout(2, 2, 0, 0));
@@ -146,7 +156,7 @@ public class MainPanel extends JPanel {
 		
 		lbl3Count = new JLabel("0");
 		lbl3Count.setFocusable(false);
-		lbl3Count.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 255)));
+		lbl3Count.setBorder(new MatteBorder(0, 0, 1, 0, new Color(0, 0, 255)));
 		lbl3Count.setForeground(Const.FrameBackgroudColor);
 		lbl3Count.setFont(Const.LabelFont);
 		lbl3Count.setHorizontalAlignment(SwingConstants.CENTER);
@@ -159,7 +169,7 @@ public class MainPanel extends JPanel {
 		
 		lbl2Count = new JLabel("0");
 		lbl2Count.setFocusable(false);
-		lbl2Count.setBorder(new MatteBorder(0, 0, 1, 1, (Color) new Color(0, 0, 255)));
+		lbl2Count.setBorder(new MatteBorder(0, 0, 1, 1, new Color(0, 0, 255)));
 		lbl2Count.setForeground(Const.FrameBackgroudColor);
 		lbl2Count.setFont(Const.LabelFont);
 		lbl2Count.setHorizontalAlignment(SwingConstants.CENTER);
@@ -172,13 +182,13 @@ public class MainPanel extends JPanel {
 		
 		lbl1Count = new JLabel("0");
 		lbl1Count.setFocusable(false);
-		lbl1Count.setBorder(new MatteBorder(0, 0, 1, 0, (Color) new Color(0, 0, 255)));
+		lbl1Count.setBorder(new MatteBorder(0, 0, 1, 0, new Color(0, 0, 255)));
 		lbl1Count.setForeground(Const.FrameBackgroudColor);
 		lbl1Count.setFont(Const.LabelFont);
 		lbl1Count.setHorizontalAlignment(SwingConstants.CENTER);
 		pnl1decker.add(lbl1Count, BorderLayout.CENTER);
 		
-		JPanel pnlButtons = new JPanel();
+		pnlButtons = new JPanel();
 		pnlButtons.setOpaque(false);
 		pnlShips.add(pnlButtons);
 		pnlButtons.setLayout(new BoxLayout(pnlButtons, BoxLayout.X_AXIS));
@@ -269,7 +279,15 @@ public class MainPanel extends JPanel {
 		lblRightPlayer.setText(name);
 	}
 	
-	public void updateRightStatus(PlayerStatus status) {
+	public void enemyCheck(Point p, boolean shot) {
+		if(shot) {
+			enemyField.setSinked(p.x, p.y);
+		} else {
+			enemyField.setChecked(p.x, p.y);
+		}
+	}
+	
+	public void updateLeftStatus(PlayerStatus status) {
 		switch (status) {
 		case Connecting:
 			lblLeftStatus.setForeground(Const.ConnectingStatusColor);
@@ -295,10 +313,26 @@ public class MainPanel extends JPanel {
 			lblLeftStatus.setForeground(Const.MissStatusColor);
 			lblLeftStatus.setText("Miss");
 			break;
+		case Turn:
+			lblLeftStatus.setForeground(Const.ReadyStatusColor);
+			lblLeftStatus.setText("Turn");
+			break;
+		case Wait:
+			lblLeftStatus.setForeground(Const.ConnectingStatusColor);
+			lblLeftStatus.setText("Wait");
+			break;
+		case Win:
+			lblLeftStatus.setForeground(Const.ShotStatusColor);
+			lblLeftStatus.setText("Win");
+			break;
+		case Lose:
+			lblLeftStatus.setForeground(Const.MissStatusColor);
+			lblLeftStatus.setText("Lose");
+			break;
 		}
 	}
 	
-	public void updateLeftStatus(PlayerStatus status) {
+	public void updateRightStatus(PlayerStatus status) {
 		switch (status) {
 		case Connecting:
 			lblRightStatus.setForeground(Const.ConnectingStatusColor);
@@ -310,7 +344,7 @@ public class MainPanel extends JPanel {
 			break;
 		case Leave:
 			lblRightStatus.setForeground(Const.LeaveStatusColor);
-			lblRightStatus.setText("Leave :(");
+			lblRightStatus.setText( "Leave :(" );
 			break;
 		case Ready:
 			lblRightStatus.setForeground(Const.ReadyStatusColor);
@@ -324,10 +358,24 @@ public class MainPanel extends JPanel {
 			lblRightStatus.setForeground(Const.MissStatusColor);
 			lblRightStatus.setText("Miss");
 			break;
+		case Turn:
+			lblRightStatus.setForeground(Const.ReadyStatusColor);
+			lblRightStatus.setText("Turn");
+			break;
+		case Wait:
+			lblRightStatus.setForeground(Const.ConnectingStatusColor);
+			lblRightStatus.setText("Wait");
+			break;
+		case Win:
+			lblRightStatus.setForeground(Const.ShotStatusColor);
+			lblRightStatus.setText("Win");
+			break;
+		case Lose:
+			lblRightStatus.setForeground(Const.MissStatusColor);
+			lblRightStatus.setText("Lose");
+			break;
 		}
 	}
-	
-	
 	
 	public String getLeftName() {
 		return lblLeftPlayer.getText();
@@ -344,6 +392,38 @@ public class MainPanel extends JPanel {
 	public void setRightName(String name) {
 		lblRightPlayer.setText(name);
 	}
+	
+	/**
+	 * Replaces panels for ships with EnemyField object. Invoked when all ships
+	 * are placed and player click btnReady
+	 */
+	public void addEnemyField() {
+		enemyField = new EnemyField();
+		pnlShips.remove(pnlShipsList);
+		pnlShips.remove(pnlButtons);
+		pnlShips.add(enemyField);
+		repaint();
+	}
+
+	/**
+	 * @param connect
+	 *            - the connect to set
+	 */
+	public void setConnection(Connection connect) {
+		this.connect = connect;
+	}
+	
+	public int getShipsCount() {
+		return playerField.getShipsCount();
+	}
+	
+	public void setReadyActionListener(ActionListener l) {
+		btnReady.addActionListener(l);
+	}
+	
+	public void setEnemyFieldMouseListener(MouseListener l) {
+		enemyField.addMouseListener(l);
+	}
 
 	private class MouseHandler implements MouseListener, MouseMotionListener {
 		
@@ -352,7 +432,6 @@ public class MainPanel extends JPanel {
 		public int fieldXOnScreen = 0;
 		public int fieldYOnScreen = 0;
 		
-		@Override
 		public void mouseClicked(MouseEvent e) {
 			if((e.getModifiers() & MouseEvent.BUTTON3_MASK) != 0) {
 				ArrayList<Ship> shipArr = findAll(e.getPoint());
@@ -363,7 +442,6 @@ public class MainPanel extends JPanel {
 			}
 		}
 
-		@Override
 		public void mouseDragged(MouseEvent e) {
 			if(curShip != null) {
 				if((e.getModifiers() & MouseEvent.BUTTON1_MASK) != 0) {
@@ -373,19 +451,15 @@ public class MainPanel extends JPanel {
 			}
 		}
 
-		@Override
 		public void mouseMoved(MouseEvent e) {
 		}
 
-		@Override
 		public void mouseEntered(MouseEvent e) {
 		}
 
-		@Override
 		public void mouseExited(MouseEvent e) {
 		}
 
-		@Override
 		public void mousePressed(MouseEvent e) {
 			if((e.getModifiers() & MouseEvent.BUTTON1_MASK) != 0) {
 				Ship ship = find(e.getPoint());
@@ -396,7 +470,6 @@ public class MainPanel extends JPanel {
 			}
 		}
 
-		@Override
 		public void mouseReleased(MouseEvent e) {
 			if(curShip != null) {
 				int xPos = e.getXOnScreen() - fieldXOnScreen;
@@ -408,12 +481,10 @@ public class MainPanel extends JPanel {
 						btnReady.setEnabled(true);
 					}
 				} else if(returnCode == 1) {
-					// Error: ship is not fit to the field
+					System.err.println("Error: ship is not fit to the field");
 					curShip.moveCenter(Const.ShipInitialCoords[curShip.getSize() - 1]);
 					incLabel(curShip.getSize());
-					System.err.println("Error: ship is not fit to the field");
 				} else if(returnCode == 2) {
-					// Error: ship is contacting other ships
 					System.err.println("Error: ship is contacting other ships");
 					curShip.moveCenter(Const.ShipInitialCoords[curShip.getSize() - 1]);
 					incLabel(curShip.getSize());
@@ -495,5 +566,11 @@ public class MainPanel extends JPanel {
 			
 			return result;
 		}
+	}
+
+	public boolean fire(Point p) {
+		boolean result = playerField.fire(p.x, p.y);
+		repaint();
+		return result;
 	}
 }

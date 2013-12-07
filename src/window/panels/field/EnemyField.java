@@ -17,10 +17,21 @@ public class EnemyField extends AbstractField {
 		checkedCells = new ArrayList<Point>(0);
 	}
 	
+	public void setSinked(int x, int y) {
+		if(cells[x][y] == CellState.Empty) {
+			checkedCells.remove(new Point(x, y));
+			cells[x][y] = CellState.Sinked;
+		}
+		
+		repaint();
+	}
+	
 	public void setChecked(int x, int y) {
 		if (cells[x][y] == CellState.Empty) {
 			checkedCells.add(new Point(x, y));
 		}
+
+		repaint();
 	}
 	
 	@Override
@@ -32,7 +43,7 @@ public class EnemyField extends AbstractField {
 			int y = p.y * (Const.CellSize + 1);
 			
 			g.setColor(new Color(0, 0, 0));
-			g.fillOval(x, y, cellSize, cellSize);
+			g.fillOval(x + cellSize / 4, y + cellSize / 4, cellSize / 2, cellSize / 2);
 		}
 	}
 }

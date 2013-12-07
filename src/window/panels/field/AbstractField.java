@@ -37,10 +37,6 @@ public abstract class AbstractField extends JPanel {
 		setMaximumSize(getSize());
 	}
 	
-	public void setSinked(int x, int y) {
-		cells[x][y] = CellState.Sinked;
-	}
-	
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);

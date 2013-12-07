@@ -214,6 +214,7 @@ public class LoginFrame extends JFrame implements ActionListener {
 		} else if(command.equals(Const.ConnectButtonCommand)) {
 			try {
 				Socket socket = new Socket(fldIp.getText(), Const.DefaultPort);
+//				Socket socket = new Socket("WIN-5FGI7G6M6VB", Const.DefaultPort);
 				new MainFrame(fldName.getText(), socket);
 				this.setVisible(false);
 			} catch (UnknownHostException e1) {
