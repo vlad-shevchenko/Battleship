@@ -38,7 +38,7 @@ import window.MainFrame;
 
 public class LoginFrame extends JFrame implements ActionListener {
 	private JTextField fldName;
-	private JFormattedTextField fldIp;
+	private JTextField fldIpv4;
 	private JButton btnServer;
 	private JButton btnConnect;
 	
@@ -81,72 +81,45 @@ public class LoginFrame extends JFrame implements ActionListener {
 			public void caretUpdate(CaretEvent e) {
 				btnServer.setEnabled(!fldName.getText().isEmpty());
 				btnConnect.setEnabled(!fldName.getText().isEmpty()
-						&& !fldIp.getText().isEmpty());
+						&& !fldIpv4.getText().isEmpty());
 			}
 		});
 		
 		Component horizontalStrut_4 = Box.createHorizontalStrut(5);
 		pnlName.add(horizontalStrut_4);
 		
-		JPanel pnlIp = new JPanel();
-		pnlIp.setOpaque(false);
-		pnlFields.add(pnlIp);
-		pnlIp.setLayout(new BoxLayout(pnlIp, BoxLayout.X_AXIS));
+		JPanel pnlIpv4 = new JPanel();
+		pnlIpv4.setOpaque(false);
+		pnlFields.add(pnlIpv4);
+		pnlIpv4.setLayout(new BoxLayout(pnlIpv4, BoxLayout.X_AXIS));
 		
 		Component horizontalStrut_2 = Box.createHorizontalStrut(5);
-		pnlIp.add(horizontalStrut_2);
+		pnlIpv4.add(horizontalStrut_2);
 		
-		JLabel lblIp = new JLabel("IP:");
-		lblIp.setForeground(Const.LabelColor);
-		lblIp.setFont(Const.LabelFont);
-		pnlIp.add(lblIp);
+		JLabel lblIpv4 = new JLabel("Address:");
+		lblIpv4.setToolTipText("");
+		lblIpv4.setForeground(Const.LabelColor);
+		lblIpv4.setFont(Const.LabelFont);
+		pnlIpv4.add(lblIpv4);
+		
+		JLabel label = new JLabel("[?]");
+		label.setToolTipText("<html><h4>IPv4, IPv6 or domain name</h4></html>");
+		pnlIpv4.add(label);
 		
 		Component horizontalGlue_2 = Box.createHorizontalGlue();
-		pnlIp.add(horizontalGlue_2);
+		pnlIpv4.add(horizontalGlue_2);
 		
-		try {
-			MaskFormatter formatter = new MaskFormatter("###.###.###.###");
-			formatter.setPlaceholderCharacter('#');
-			fldIp = new JFormattedTextField(formatter);
-			fldIp.setValue("127.000.000.001");
-		} catch (ParseException exception) {
-			exception.printStackTrace();
-		}
-		fldIp.setColumns(10);
-		fldIp.setForeground(Const.LabelColor);
-		fldIp.setFont(Const.LabelFont);
-		fldIp.setHorizontalAlignment(SwingConstants.CENTER);
-		fldIp.setFocusLostBehavior(JFormattedTextField.COMMIT);
-		fldIp.setMaximumSize(new Dimension(fldIp.getColumns() * 5, 30));
-		fldIp.addCaretListener(new CaretListener() {
-			public void caretUpdate(CaretEvent e) {
-				StringTokenizer tokenizer = new StringTokenizer(fldIp.getText(), ".");
-				for (int i = 0; i < 4; i++) {
-					int b = 0;
-					if(tokenizer.hasMoreTokens()) {
-						try {
-							b = Integer.parseInt(tokenizer.nextToken());
-						} catch (Exception ex) {
-							btnConnect.setEnabled(false);
-							return;
-						}
-					}
-					
-					if (b < 0 || b >= 256) { 
-						btnConnect.setEnabled(false);
-						return;
-					}
-				}
-				
-				btnServer.setEnabled(!fldName.getText().isEmpty());
-				btnConnect.setEnabled(!fldName.getText().isEmpty()
-						&& !fldIp.getText().isEmpty());
-			}
-		});
-		pnlIp.add(fldIp);
+		fldIpv4 = new JTextField();
+		fldIpv4.setToolTipText("");
+		fldIpv4.setColumns(10);
+		fldIpv4.setForeground(Const.LabelColor);
+		fldIpv4.setFont(Const.LabelFont);
+		fldIpv4.setHorizontalAlignment(SwingConstants.CENTER);
+		fldIpv4.setMaximumSize(new Dimension(fldIpv4.getColumns() * 5, 30));
+		pnlIpv4.add(fldIpv4);
 		
 		Component horizontalStrut_5 = Box.createHorizontalStrut(5);
-		pnlIp.add(horizontalStrut_5);
+		pnlIpv4.add(horizontalStrut_5);
 		
 		Component verticalGlue = Box.createVerticalGlue();
 		getContentPane().add(verticalGlue);
@@ -175,7 +148,7 @@ public class LoginFrame extends JFrame implements ActionListener {
 		btnConnect = new JButton("Connect");
 		btnConnect.setActionCommand(Const.ConnectButtonCommand);
 		btnConnect.addActionListener(this);
-		btnConnect.setToolTipText("<html><h4>Type name and IP to enable this button</h4></html>");
+		btnConnect.setToolTipText("<html><h4>Type name and address to enable this button</h4></html>");
 		btnConnect.setBackground(Const.ButtonBackground);
 		btnConnect.setEnabled(false);
 		btnConnect.setForeground(Const.LabelColor);
@@ -213,8 +186,8 @@ public class LoginFrame extends JFrame implements ActionListener {
 			}
 		} else if(command.equals(Const.ConnectButtonCommand)) {
 			try {
-				Socket socket = new Socket(fldIp.getText(), Const.DefaultPort);
-//				Socket socket = new Socket("WIN-5FGI7G6M6VB", Const.DefaultPort);
+				Socket socket = new Socket(fldIpv4.getText(), Const.DefaultPort);
+//				Socket socket = new Socket("fe80::70b6:617f:e497:a85d%11", Const.DefaultPort);
 				new MainFrame(fldName.getText(), socket);
 				this.setVisible(false);
 			} catch (UnknownHostException e1) {
