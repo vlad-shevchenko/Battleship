@@ -37,13 +37,14 @@ public class MainFrame extends JFrame {
 		
 		panel = new MainPanel(userName);
 		panel.setConnection(connect);
-		panel.setReadyActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				connect.setReady();
-				panel.addEnemyField();
-				panel.setEnemyFieldMouseListener(new MouseHandler());
-			}
-		});
+		panel.setReadyActionListener(
+			new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					connect.setReady();
+					panel.addEnemyField();
+					panel.setEnemyFieldMouseListener(new MouseHandler());
+				}
+			});
 		setContentPane(panel);
 		
 		setLocation(100, 100);

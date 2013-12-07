@@ -60,6 +60,10 @@ public class MainPanel extends JPanel {
 	private JLabel lbl1Count;
 	
 	private JButton btnReady;
+	private Component horizontalGlue_2;
+	private Component horizontalGlue_3;
+	private Component horizontalGlue_4;
+	private Component horizontalGlue_5;
 
 	public MainPanel(String userName) {
 		setSize(Const.MainFrameWidth, Const.MainFrameHeight);
@@ -72,7 +76,7 @@ public class MainPanel extends JPanel {
 		JPanel pnlBoth = new JPanel();
 		pnlBoth.setOpaque(false);
 		add(pnlBoth);
-		pnlBoth.setLayout(new BoxLayout(pnlBoth, BoxLayout.X_AXIS));
+		pnlBoth.setLayout(new GridLayout(0, 2, 0, 0));
 		
 		JPanel pnlLeft = new JPanel();
 		pnlBoth.add(pnlLeft);
@@ -94,9 +98,15 @@ public class MainPanel extends JPanel {
 		Component horizontalGlue_1 = Box.createHorizontalGlue();
 		pnlLeftStatus.add(horizontalGlue_1);
 		
+		horizontalGlue_4 = Box.createHorizontalGlue();
+		pnlLeftStatus.add(horizontalGlue_4);
+		
 		lblLeftStatus = new JLabel("");
 		lblLeftStatus.setFont(Const.LabelFont);
 		pnlLeftStatus.add(lblLeftStatus);
+		
+		horizontalGlue_2 = Box.createHorizontalGlue();
+		pnlLeftStatus.add(horizontalGlue_2);
 		
 		JPanel pnlLeftField = new JPanel();
 		pnlLeftField.setOpaque(false);
@@ -114,9 +124,15 @@ public class MainPanel extends JPanel {
 		pnlRight.add(pnlRightStatus, BorderLayout.NORTH);
 		pnlRightStatus.setLayout(new BoxLayout(pnlRightStatus, BoxLayout.X_AXIS));
 		
+		horizontalGlue_3 = Box.createHorizontalGlue();
+		pnlRightStatus.add(horizontalGlue_3);
+		
 		lblRightStatus = new JLabel("");
 		lblRightStatus.setFont(Const.LabelFont);
 		pnlRightStatus.add(lblRightStatus);
+		
+		horizontalGlue_5 = Box.createHorizontalGlue();
+		pnlRightStatus.add(horizontalGlue_5);
 		
 		Component horizontalGlue = Box.createHorizontalGlue();
 		pnlRightStatus.add(horizontalGlue);
