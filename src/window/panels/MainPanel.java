@@ -8,13 +8,11 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Robot;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import javax.swing.Box;
@@ -26,7 +24,6 @@ import javax.swing.SwingConstants;
 import javax.swing.border.MatteBorder;
 
 import main.Const;
-import window.MainFrame.Connection;
 import window.panels.field.EnemyField;
 import window.panels.field.PlayerField;
 import window.panels.ship.Ship;
@@ -34,7 +31,6 @@ import window.panels.ship.Ship;
 public class MainPanel extends JPanel {
 
 	private MouseHandler handler;
-	private Connection connect;
 	
 	private ArrayList<Ship> ships;
 	private PlayerField playerField;
@@ -60,10 +56,6 @@ public class MainPanel extends JPanel {
 	private JLabel lbl1Count;
 	
 	private JButton btnReady;
-	private Component horizontalGlue_2;
-	private Component horizontalGlue_3;
-	private Component horizontalGlue_4;
-	private Component horizontalGlue_5;
 
 	public MainPanel(String userName) {
 		setSize(Const.MainFrameWidth, Const.MainFrameHeight);
@@ -98,14 +90,14 @@ public class MainPanel extends JPanel {
 		Component horizontalGlue_1 = Box.createHorizontalGlue();
 		pnlLeftStatus.add(horizontalGlue_1);
 		
-		horizontalGlue_4 = Box.createHorizontalGlue();
+		Component horizontalGlue_4 = Box.createHorizontalGlue();
 		pnlLeftStatus.add(horizontalGlue_4);
 		
 		lblLeftStatus = new JLabel("");
 		lblLeftStatus.setFont(Const.LabelFont);
 		pnlLeftStatus.add(lblLeftStatus);
 		
-		horizontalGlue_2 = Box.createHorizontalGlue();
+		Component horizontalGlue_2 = Box.createHorizontalGlue();
 		pnlLeftStatus.add(horizontalGlue_2);
 		
 		JPanel pnlLeftField = new JPanel();
@@ -124,14 +116,14 @@ public class MainPanel extends JPanel {
 		pnlRight.add(pnlRightStatus, BorderLayout.NORTH);
 		pnlRightStatus.setLayout(new BoxLayout(pnlRightStatus, BoxLayout.X_AXIS));
 		
-		horizontalGlue_3 = Box.createHorizontalGlue();
+		Component horizontalGlue_3 = Box.createHorizontalGlue();
 		pnlRightStatus.add(horizontalGlue_3);
 		
 		lblRightStatus = new JLabel("");
 		lblRightStatus.setFont(Const.LabelFont);
 		pnlRightStatus.add(lblRightStatus);
 		
-		horizontalGlue_5 = Box.createHorizontalGlue();
+		Component horizontalGlue_5 = Box.createHorizontalGlue();
 		pnlRightStatus.add(horizontalGlue_5);
 		
 		Component horizontalGlue = Box.createHorizontalGlue();
@@ -210,6 +202,7 @@ public class MainPanel extends JPanel {
 		pnlButtons.setLayout(new BoxLayout(pnlButtons, BoxLayout.X_AXIS));
 		
 		btnReady = new JButton("Ready!");
+		btnReady.setToolTipText("<html><h4>Place all ships to start game</h4></html>");
 		btnReady.setFocusable(false);
 		btnReady.setEnabled(false);
 		btnReady.setBackground(Const.ButtonBackground);
@@ -222,7 +215,7 @@ public class MainPanel extends JPanel {
 		add(pnlMessage, BorderLayout.SOUTH);
 		pnlMessage.setLayout(new BorderLayout(0, 0));
 		
-		JLabel lblMessage = new JLabel("Move ships from right side on field.");
+		JLabel lblMessage = new JLabel("Move ships from right side on field. Right click to turn ship.");
 		lblMessage.setHorizontalAlignment(SwingConstants.CENTER);
 		lblMessage.setForeground(Const.LabelColor);
 		lblMessage.setFont(Const.MessageFont);
@@ -419,14 +412,6 @@ public class MainPanel extends JPanel {
 		pnlShips.remove(pnlButtons);
 		pnlShips.add(enemyField);
 		repaint();
-	}
-
-	/**
-	 * @param connect
-	 *            - the connect to set
-	 */
-	public void setConnection(Connection connect) {
-		this.connect = connect;
 	}
 	
 	public int getShipsCount() {

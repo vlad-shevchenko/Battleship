@@ -3,9 +3,6 @@ package main;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Point;
-import java.util.Collection;
-
-import window.panels.ship.Ship;
 
 /**
  * Class which encapsulates all constants of program
@@ -14,7 +11,6 @@ import window.panels.ship.Ship;
 public class Const {
 	
 //	Error messages
-	
 	public static final String UnknownHostErrorMsg = 
 			"Exception: UnknownHostException.\n"
 			+ "Can not connect to this server. Check IP, please.";
@@ -49,12 +45,21 @@ public class Const {
 	public static final Font MessageFont = new Font("Cambria", Font.ITALIC, 12);
 	public static final Color MessageBackground = new Color(95, 158, 160);
 	
-	public static final Color ConnectingStatusColor = new Color(50, 80, 150);
-	public static final Color PlacesShipsStatusColor = new Color(30, 30, 30);
-	public static final Color LeaveStatusColor = new Color(0, 0, 0);
-	public static final Color ReadyStatusColor = new Color(100, 180, 100);
-	public static final Color ShotStatusColor = new Color(75, 160, 75);
-	public static final Color MissStatusColor = new Color(160, 75, 75);
+	//	Field colors
+		public static final Color FieldFilledCellColor = new Color(195, 150, 150);
+		public static final Color FieldSinkedShipCrossColor = new Color(200, 30, 80);
+		public static final Color FieldShipColor = new Color(195, 150, 150);
+		public static final Color FieldCellBackground = new Color(95, 150, 150);
+		public static final Color FieldBackground = new Color(0, 0, 255);
+		public static final Color FieldCellPointColor = new Color(0, 0, 0);	
+	
+	//	Status color
+		public static final Color ConnectingStatusColor = new Color(50, 80, 150);
+		public static final Color PlacesShipsStatusColor = new Color(30, 30, 30);
+		public static final Color LeaveStatusColor = new Color(0, 0, 0);
+		public static final Color ReadyStatusColor = new Color(100, 180, 100);
+		public static final Color ShotStatusColor = new Color(75, 160, 75);
+		public static final Color MissStatusColor = new Color(160, 75, 75);
 	
 //	ActionCommand's
 	public static final String ServerButtonCommand = "LoginFrame -> btnServer";
@@ -79,6 +84,5 @@ public class Const {
 		new Point(378, 65),
 		new Point(273, 65) 
 		};
-	public static final Color FilledCellColor = new Color(195, 150, 150);
 		
 }

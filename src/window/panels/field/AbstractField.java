@@ -1,13 +1,7 @@
 package window.panels.field;
 
-import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import javax.swing.JPanel;
-import window.panels.ship.Ship;
 import main.Const;
 
 public abstract class AbstractField extends JPanel {
@@ -31,7 +25,7 @@ public abstract class AbstractField extends JPanel {
 			}
 		}
 		
-		setBackground(new Color(0, 0, 255));
+		setBackground(Const.FieldBackground);
 		setSize(width * (cellSize + 1), height * (cellSize + 1));
 		setMinimumSize(getSize());
 		setMaximumSize(getSize());
@@ -48,14 +42,14 @@ public abstract class AbstractField extends JPanel {
 				
 				switch (cells[i][j]) {
 				case Empty: {
-					g.setColor(new Color(95, 150, 150));
+					g.setColor(Const.FieldCellBackground);
 					g.fillRect(x, y, Const.CellSize, Const.CellSize);
 					break;
 				}
 				case Sinked: {
-					g.setColor(new Color(195, 150, 150));
+					g.setColor(Const.FieldShipColor);
 					g.fillRect(x, y, Const.CellSize, Const.CellSize);
-					g.setColor(new Color(200, 30, 80));
+					g.setColor(Const.FieldSinkedShipCrossColor);
 					g.drawLine(x, y, x + cellSize, y + cellSize);
 					g.drawLine(x + cellSize, y, x, y + cellSize);
 					break;

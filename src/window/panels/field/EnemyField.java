@@ -1,6 +1,5 @@
 package window.panels.field;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
@@ -42,7 +41,7 @@ public class EnemyField extends AbstractField {
 			int x = p.x * (Const.CellSize + 1);
 			int y = p.y * (Const.CellSize + 1);
 			
-			g.setColor(new Color(0, 0, 0));
+			g.setColor(Const.FieldCellPointColor);
 			g.fillOval(x + cellSize / 4, y + cellSize / 4, cellSize / 2, cellSize / 2);
 		}
 	}

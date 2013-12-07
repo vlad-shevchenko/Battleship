@@ -3,7 +3,6 @@ package window.panels.field;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
-
 import window.panels.ship.Ship;
 import main.Const;
 
@@ -24,7 +23,7 @@ public class PlayerField extends AbstractField {
 		for(Point p : filledCells) {
 			int x = p.x * (Const.CellSize + 1);
 			int y = p.y * (Const.CellSize + 1);
-			g.setColor(Const.FilledCellColor);
+			g.setColor(Const.FieldFilledCellColor);
 			g.fillRect(x, y, Const.CellSize, Const.CellSize);
 		}
 	}

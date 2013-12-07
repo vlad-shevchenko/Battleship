@@ -1,32 +1,22 @@
 package window;
 
-import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import main.Const;
 import window.panels.MainPanel;
 import window.panels.PlayerStatus;
-import window.panels.field.CellState;
-import main.Const;
 
 public class MainFrame extends JFrame {
 	private Connection connect;
@@ -36,7 +26,6 @@ public class MainFrame extends JFrame {
 		connect = new Connection(socket);
 		
 		panel = new MainPanel(userName);
-		panel.setConnection(connect);
 		panel.setReadyActionListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent e) {

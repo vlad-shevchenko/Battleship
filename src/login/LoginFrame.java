@@ -2,43 +2,29 @@ package login;
 
 import javax.swing.JFrame;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultDesktopManager;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JButton;
-import javax.swing.UIManager;
-
 import java.awt.Component;
-
 import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-
 import main.Const;
-
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.text.ParseException;
-import java.util.StringTokenizer;
-
-import javax.swing.JFormattedTextField;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
-import javax.swing.text.MaskFormatter;
 import javax.swing.SwingConstants;
-
 import window.MainFrame;
 
 public class LoginFrame extends JFrame implements ActionListener {
 	private JTextField fldName;
-	private JTextField fldIpv4;
+	private JTextField fldAddress;
 	private JButton btnServer;
 	private JButton btnConnect;
 	
@@ -81,7 +67,7 @@ public class LoginFrame extends JFrame implements ActionListener {
 			public void caretUpdate(CaretEvent e) {
 				btnServer.setEnabled(!fldName.getText().isEmpty());
 				btnConnect.setEnabled(!fldName.getText().isEmpty()
-						&& !fldIpv4.getText().isEmpty());
+						&& !fldAddress.getText().isEmpty());
 			}
 		});
 		
@@ -109,14 +95,21 @@ public class LoginFrame extends JFrame implements ActionListener {
 		Component horizontalGlue_2 = Box.createHorizontalGlue();
 		pnlIpv4.add(horizontalGlue_2);
 		
-		fldIpv4 = new JTextField();
-		fldIpv4.setToolTipText("");
-		fldIpv4.setColumns(10);
-		fldIpv4.setForeground(Const.LabelColor);
-		fldIpv4.setFont(Const.LabelFont);
-		fldIpv4.setHorizontalAlignment(SwingConstants.CENTER);
-		fldIpv4.setMaximumSize(new Dimension(fldIpv4.getColumns() * 5, 30));
-		pnlIpv4.add(fldIpv4);
+		fldAddress = new JTextField();
+		fldAddress.setToolTipText("");
+		fldAddress.setColumns(10);
+		fldAddress.setForeground(Const.LabelColor);
+		fldAddress.setFont(Const.LabelFont);
+		fldAddress.setHorizontalAlignment(SwingConstants.CENTER);
+		fldAddress.setMaximumSize(new Dimension(fldAddress.getColumns() * 5, 30));
+		fldAddress.addCaretListener(new CaretListener() {
+			public void caretUpdate(CaretEvent e) {
+				btnServer.setEnabled(!fldName.getText().isEmpty());
+				btnConnect.setEnabled(!fldName.getText().isEmpty()
+						&& !fldAddress.getText().isEmpty());
+			}
+		});
+		pnlIpv4.add(fldAddress);
 		
 		Component horizontalStrut_5 = Box.createHorizontalStrut(5);
 		pnlIpv4.add(horizontalStrut_5);
@@ -186,7 +179,7 @@ public class LoginFrame extends JFrame implements ActionListener {
 			}
 		} else if(command.equals(Const.ConnectButtonCommand)) {
 			try {
-				Socket socket = new Socket(fldIpv4.getText(), Const.DefaultPort);
+				Socket socket = new Socket(fldAddress.getText(), Const.DefaultPort);
 //				Socket socket = new Socket("fe80::70b6:617f:e497:a85d%11", Const.DefaultPort);
 				new MainFrame(fldName.getText(), socket);
 				this.setVisible(false);
