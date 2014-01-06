@@ -8,12 +8,14 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Robot;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -27,6 +29,8 @@ import main.Const;
 import window.panels.field.EnemyField;
 import window.panels.field.PlayerField;
 import window.panels.ship.Ship;
+
+import java.awt.Font;
 
 public class MainPanel extends JPanel {
 
@@ -56,6 +60,7 @@ public class MainPanel extends JPanel {
 	private JLabel lbl1Count;
 	
 	private JButton btnReady;
+	private JButton btnRandom;
 
 	public MainPanel(String userName) {
 		setSize(Const.MainFrameWidth, Const.MainFrameHeight);
@@ -201,6 +206,14 @@ public class MainPanel extends JPanel {
 		pnlShips.add(pnlButtons);
 		pnlButtons.setLayout(new BoxLayout(pnlButtons, BoxLayout.X_AXIS));
 		
+		btnRandom = new JButton("Random");
+		pnlButtons.add(btnRandom);
+		btnRandom.setToolTipText("<html><h4>Place all ship in random places</h4></html>");
+		btnRandom.setForeground(new Color(0, 0, 205));
+		btnRandom.setFont(new Font("Cambria", Font.PLAIN, 14));
+		btnRandom.setFocusable(false);
+		btnRandom.setBackground(new Color(0, 250, 154));
+		
 		btnReady = new JButton("Ready!");
 		btnReady.setToolTipText("<html><h4>Place all ships to start game</h4></html>");
 		btnReady.setFocusable(false);
@@ -263,6 +276,15 @@ public class MainPanel extends JPanel {
 			}
 		});
 		pnlLeftField.add(playerField);
+		
+		btnRandom.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				playerField.fillRandom(ships);
+				btnReady.setEnabled(true);
+				repaint();
+			}
+		});
 		
 		try {
 			Robot robot = new Robot();

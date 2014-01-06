@@ -34,6 +34,7 @@ public class MainFrame extends JFrame {
 					panel.setEnemyFieldMouseListener(new MouseHandler());
 				}
 			});
+		
 		setContentPane(panel);
 		
 		setLocation(100, 100);
@@ -79,13 +80,14 @@ public class MainFrame extends JFrame {
 				
 				try {
 					while(!(playerIsReady && enemyIsReady)) {
-						sleep(100);
+						sleep(200);
 					}
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 				
-				// if currentTurn == true, is player's turn now, else enemy's one
+				// if currentTurn == true, then there is player's turn now, else
+				// enemy's one
 				boolean currentTurn = firstFire;
 				
 				if(currentTurn) {

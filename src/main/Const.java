@@ -20,7 +20,7 @@ public class Const {
 			+ "at this address or you have problems with Internet connection.";
 	
 //	Network properties
-	public static final int DefaultPort = 8181;
+	public static final int DefaultPort = 7364;
 	
 //	Field properties
 	public static final int CellSize = 20;
@@ -66,14 +66,14 @@ public class Const {
 	public static final String ConnectButtonCommand = "LoginFrame -> btnConnect";
 	
 //	Game properties
-	public static final int ShipCount = 3;
+	public static final int ShipCount = 10;
 	
 	/**
 	 * Size of the array must be equal to ShipCount.
 	 * Change array is not recommended, because UI was 
 	 * designed specially for such ship-set. 
 	 */
-	public static final int[] ShipSizes = {4, 3, 2, 1};
+	public static final int[] ShipSizes = {4, 3, 3, 2, 2, 2, 1, 1, 1, 1};
 	
 	/**
 	 * Yeah, I'm crazy code monkey :-(
